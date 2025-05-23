@@ -1,0 +1,1 @@
+# week02-n8n-automation
