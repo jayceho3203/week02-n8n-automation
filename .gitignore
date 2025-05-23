@@ -1,0 +1,38 @@
+# === Hệ thống macOS ===
+.DS_Store
+
+# === Cursor / VS Code ===
+.vscode/
+
+# === Docker volumes (nếu có) ===
+docker-compose.override.yml
+*.log
+
+# === Biến môi trường / secrets ===
+.env
+.env.local
+.env.*
+
+# === n8n ===
+.n8n/
+*.sqlite
+*.sqlite-journal
+*.backup
+
+# === Node.js (chỉ nếu bạn cài n8n bằng npm) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Python / AI Script (nếu có) ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+checkpoints/
+outputs/
+logs/
