@@ -31,12 +31,6 @@
 
 ---
 
-## 📸 Screenshot minh họa
-
-> ![n8n workflow](./screenshot_day01.png)  
-> *Receive Webhook → HTTP Request*
-
----
 
 ## 📚 Kiến thức học được
 
