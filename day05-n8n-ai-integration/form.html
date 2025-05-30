@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    form { max-width: 400px; margin: auto; }
+    input, button { width: 100%; padding: 10px; margin-bottom: 10px; }
+    button { background: #007bff; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <h2>Gửi câu hỏi cho AI</h2>
+  <form id="aiForm">
+    <input type="text" name="message" placeholder="Nhập câu hỏi cho AI" required />
+    <button type="submit">Gửi</button>
+  </form>
+  <div id="result" style="max-width:400px;margin:auto;color:green;"></div>
+  <script>
+    document.getElementById('aiForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(this).entries());
+      const res = await fetch('http://localhost:5678/webhook/ai-chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      document.getElementById('result').innerText = res.ok ? 'Đã gửi câu hỏi!' : 'Gửi thất bại!';
+    };
+  </script>
+</body>
+</html> 
