@@ -11,7 +11,7 @@
 
 ## 2. Node HTTP Request
 - **Method**: `POST`
-- **URL**: `https://api.openai.com/v1/chat/completions`
+- **URL**: `  https://openrouter.ai/api/v1/chat/completions`
 - **Headers**:
   - `Content-Type`: `application/json`
   - `Authorization`: `Bearer YOUR_OPENAI_API_KEY`

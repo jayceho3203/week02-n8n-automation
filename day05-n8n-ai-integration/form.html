@@ -2,33 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>AI Chat (ChatGPT style)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat Form</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    form { max-width: 400px; margin: auto; }
-    input, button { width: 100%; padding: 10px; margin-bottom: 10px; }
-    button { background: #007bff; color: #fff; border: none; cursor: pointer; }
-    button:hover { background: #0056b3; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; }
+    #chatbox { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 24px; min-height: 400px; }
+    .bubble { margin: 12px 0; padding: 12px 18px; border-radius: 18px; max-width: 80%; word-break: break-word; }
+    .user { background: #007bff; color: #fff; margin-left: auto; text-align: right; }
+    .ai { background: #e9ecef; color: #222; margin-right: auto; text-align: left; }
+    #inputRow { display: flex; gap: 8px; margin-top: 24px; }
+    #message { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+    #sendBtn { padding: 10px 20px; border-radius: 8px; border: none; background: #007bff; color: #fff; cursor: pointer; }
+    #sendBtn:disabled { background: #aaa; }
   </style>
 </head>
 <body>
-  <h2>Gửi câu hỏi cho AI</h2>
-  <form id="aiForm">
-    <input type="text" name="message" placeholder="Nhập câu hỏi cho AI" required />
-    <button type="submit">Gửi</button>
+  <div id="chatbox"></div>
+  <form id="aiForm" autocomplete="off">
+    <div id="inputRow">
+      <input type="text" id="message" name="message" placeholder="Nhập câu hỏi cho AI..." required autocomplete="off" />
+      <button id="sendBtn" type="submit">Gửi</button>
+    </div>
   </form>
-  <div id="result" style="max-width:400px;margin:auto;color:green;"></div>
   <script>
-    document.getElementById('aiForm').onsubmit = async function(e) {
+    const chatbox = document.getElementById('chatbox');
+    const form = document.getElementById('aiForm');
+    const messageInput = document.getElementById('message');
+    const sendBtn = document.getElementById('sendBtn');
+    let history = [];
+
+    function renderHistory() {
+      chatbox.innerHTML = '';
+      history.forEach(item => {
+        if (item.role === 'user') {
+          chatbox.innerHTML += `<div class="bubble user">${item.content}</div>`;
+        } else {
+          chatbox.innerHTML += `<div class="bubble ai">${item.content}</div>`;
+        }
+      });
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    form.onsubmit = async function(e) {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(this).entries());
+      const prompt = messageInput.value.trim();
+      if (!prompt) return;
+      history.push({ role: 'user', content: prompt });
+      renderHistory();
+      messageInput.value = '';
+      sendBtn.disabled = true;
+
+      // Gửi prompt lên n8n
       const res = await fetch('http://localhost:5678/webhook/ai-chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
+        body: JSON.stringify({ message: prompt })
       });
-      document.getElementById('result').innerText = res.ok ? 'Đã gửi câu hỏi!' : 'Gửi thất bại!';
+      let aiMsg = 'Không nhận được phản hồi từ AI!';
+      if (res.ok) {
+        const result = await res.json();
+        aiMsg = result.content || aiMsg;
+      }
+      history.push({ role: 'ai', content: aiMsg });
+      renderHistory();
+      sendBtn.disabled = false;
+      messageInput.focus();
     };
   </script>
 </body>
